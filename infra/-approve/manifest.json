@@ -1,0 +1,21 @@
+{
+  "version": "0.14.0",
+  "stacks": {
+    "lambda-hello-world": {
+      "name": "lambda-hello-world",
+      "constructPath": "lambda-hello-world",
+      "workingDirectory": "stacks/lambda-hello-world",
+      "synthesizedStackPath": "stacks/lambda-hello-world/cdk.tf.json",
+      "annotations": [],
+      "dependencies": []
+    },
+    "lambda-hello-name": {
+      "name": "lambda-hello-name",
+      "constructPath": "lambda-hello-name",
+      "workingDirectory": "stacks/lambda-hello-name",
+      "synthesizedStackPath": "stacks/lambda-hello-name/cdk.tf.json",
+      "annotations": [],
+      "dependencies": []
+    }
+  }
+}

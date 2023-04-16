@@ -1,0 +1,151 @@
+{
+  "//": {
+    "metadata": {
+      "backend": "local",
+      "stackName": "lambda-hello-world",
+      "version": "0.14.0"
+    },
+    "outputs": {
+      "lambda-hello-world": {
+        "url": "url"
+      }
+    }
+  },
+  "output": {
+    "url": {
+      "value": "${aws_apigatewayv2_api.api-gw.api_endpoint}"
+    }
+  },
+  "provider": {
+    "aws": [
+      {
+        "region": "us-west-2"
+      }
+    ],
+    "random": [
+      {
+      }
+    ]
+  },
+  "resource": {
+    "aws_apigatewayv2_api": {
+      "api-gw": {
+        "//": {
+          "metadata": {
+            "path": "lambda-hello-world/api-gw",
+            "uniqueId": "api-gw"
+          }
+        },
+        "name": "lambda-hello-world",
+        "protocol_type": "HTTP",
+        "target": "${aws_lambda_function.learn-cdktf-lambda.arn}"
+      }
+    },
+    "aws_iam_role": {
+      "lambda-exec": {
+        "//": {
+          "metadata": {
+            "path": "lambda-hello-world/lambda-exec",
+            "uniqueId": "lambda-exec"
+          }
+        },
+        "assume_role_policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Action\":\"sts:AssumeRole\",\"Principal\":{\"Service\":\"lambda.amazonaws.com\"},\"Effect\":\"Allow\",\"Sid\":\"\"}]}",
+        "name": "learn-cdktf-lambda-hello-world-${random_pet.random-name.id}"
+      }
+    },
+    "aws_iam_role_policy_attachment": {
+      "lambda-managed-policy": {
+        "//": {
+          "metadata": {
+            "path": "lambda-hello-world/lambda-managed-policy",
+            "uniqueId": "lambda-managed-policy"
+          }
+        },
+        "policy_arn": "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+        "role": "${aws_iam_role.lambda-exec.name}"
+      }
+    },
+    "aws_lambda_function": {
+      "learn-cdktf-lambda": {
+        "//": {
+          "metadata": {
+            "path": "lambda-hello-world/learn-cdktf-lambda",
+            "uniqueId": "learn-cdktf-lambda"
+          }
+        },
+        "function_name": "learn-cdktf-lambda-hello-world-${random_pet.random-name.id}",
+        "handler": "index.handler",
+        "role": "${aws_iam_role.lambda-exec.arn}",
+        "runtime": "nodejs14.x",
+        "s3_bucket": "${aws_s3_bucket.bucket.bucket}",
+        "s3_key": "${aws_s3_object.lambda-archive.key}"
+      }
+    },
+    "aws_lambda_permission": {
+      "apigw-lambda": {
+        "//": {
+          "metadata": {
+            "path": "lambda-hello-world/apigw-lambda",
+            "uniqueId": "apigw-lambda"
+          }
+        },
+        "action": "lambda:InvokeFunction",
+        "function_name": "${aws_lambda_function.learn-cdktf-lambda.function_name}",
+        "principal": "apigateway.amazonaws.com",
+        "source_arn": "${aws_apigatewayv2_api.api-gw.execution_arn}/*/*"
+      }
+    },
+    "aws_s3_bucket": {
+      "bucket": {
+        "//": {
+          "metadata": {
+            "path": "lambda-hello-world/bucket",
+            "uniqueId": "bucket"
+          }
+        },
+        "bucket_prefix": "learn-cdktf-lambda-hello-world"
+      }
+    },
+    "aws_s3_object": {
+      "lambda-archive": {
+        "//": {
+          "metadata": {
+            "path": "lambda-hello-world/lambda-archive",
+            "uniqueId": "lambda-archive"
+          }
+        },
+        "bucket": "${aws_s3_bucket.bucket.bucket}",
+        "key": "v0.0.2/archive.zip",
+        "source": "assets/lambda-asset/BD42BA06A24B006B4907A4F399734ACC/archive.zip"
+      }
+    },
+    "random_pet": {
+      "random-name": {
+        "//": {
+          "metadata": {
+            "path": "lambda-hello-world/random-name",
+            "uniqueId": "random-name"
+          }
+        },
+        "length": 2
+      }
+    }
+  },
+  "terraform": {
+    "backend": {
+      "local": {
+        "path": "/Users/user1/Documents/GitHub/cdktf-ts_lambdas/infra/terraform.lambda-hello-world.tfstate"
+      }
+    },
+    "required_providers": {
+      "aws": {
+        "source": "aws",
+        "version": "4.50.0"
+      },
+      "random": {
+        "source": "hashicorp/random",
+        "version": "3.4.3"
+      }
+    }
+  }
+}
